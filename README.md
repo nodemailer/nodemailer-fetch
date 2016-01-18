@@ -12,7 +12,7 @@ var fetch = require('nodemailer-fetch');
 fetch('http://www.google.com/').pipe(process.stdout);
 ```
 
-The method takes a single argument, the destination URL. Only GET is supported.
+The method takes the destination URL as the first and optional options object as the second argument. Only GET is supported.
 
 The defaults are the following:
 
@@ -22,6 +22,27 @@ The defaults are the following:
   * Cookies are supported
   * No shared HTTP Agent
   * Invalid SSL certs are allowed
+
+### options
+
+Possible options are the following:
+
+  * **userAgent** a string defining the User Agent of the request (by default not set)
+  * **cookie** a cookie string or an array of cookie strings where a cookie is the value used by 'Set-Cookie' header
+  * **maxRedirects** how many redirects to allow (defaults to 5, set to 0 to disable redirects entirely)
+
+  ```javascript
+  var fetch = require('nodemailer-fetch');
+  fetch('http://www.google.com/', {
+      cookie: [
+          'cookie_name1=cookie_value1',
+          'cookie_name2=cookie_value2; expires=Sun, 16 Jul 3567 06:23:41 GMT',
+      ],
+      userAgent: 'MyFetcher/1.0'
+  }).pipe(process.stdout);
+  ```
+
+> Cookies are domain specific like normal browser cookies, so if a redirect happens to another domain, then cookies are not passed to it, HTTPS-only cookies are not passed to HTTP etc.
 
 ## License
 **MIT**

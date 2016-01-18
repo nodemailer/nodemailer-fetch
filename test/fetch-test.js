@@ -118,7 +118,10 @@ describe('fetch tests', function () {
                         'Content-Type': 'text/plain',
                         'Content-Encoding': 'gzip'
                     });
-                    res.end(zlib.gzipSync('Hello World HTTP\n'));
+
+                    var stream = zlib.createGzip();
+                    stream.pipe(res);
+                    stream.end('Hello World HTTP\n');
                     break;
 
                 case '/invalid':
@@ -133,6 +136,20 @@ describe('fetch tests', function () {
                         'Content-Type': 'text/plain'
                     });
                     res.end(new Buffer(req.headers.authorization.split(' ').pop(), 'base64'));
+                    break;
+
+                case '/cookie':
+                    res.writeHead(200, {
+                        'Content-Type': 'text/plain'
+                    });
+                    res.end(req.headers.cookie);
+                    break;
+
+                case '/ua':
+                    res.writeHead(200, {
+                        'Content-Type': 'text/plain'
+                    });
+                    res.end(req.headers['user-agent']);
                     break;
 
                 default:
@@ -210,6 +227,50 @@ describe('fetch tests', function () {
         req.on('end', function () {});
     });
 
+    it('should fetch HTTP data with custom redirect limit', function (done) {
+        var req = fetch('http://localhost:' + HTTP_PORT + '/redirect3', {
+            maxRedirects: 3
+        });
+        var buf = [];
+        req.on('data', function (chunk) {
+            buf.push(chunk);
+        });
+        req.on('end', function () {
+            expect(Buffer.concat(buf).toString()).to.equal('Hello World HTTP\n');
+            done();
+        });
+    });
+
+    it('should return error for custom redirect limit', function (done) {
+        var req = fetch('http://localhost:' + HTTP_PORT + '/redirect3', {
+            maxRedirects: 2
+        });
+        var buf = [];
+        req.on('data', function (chunk) {
+            buf.push(chunk);
+        });
+        req.on('error', function (err) {
+            expect(err).to.exist;
+            done();
+        });
+        req.on('end', function () {});
+    });
+
+    it('should return disable redirects', function (done) {
+        var req = fetch('http://localhost:' + HTTP_PORT + '/redirect1', {
+            maxRedirects: 0
+        });
+        var buf = [];
+        req.on('data', function (chunk) {
+            buf.push(chunk);
+        });
+        req.on('error', function (err) {
+            expect(err).to.exist;
+            done();
+        });
+        req.on('end', function () {});
+    });
+
     it('should unzip compressed HTTP data', function (done) {
         var req = fetch('http://localhost:' + HTTP_PORT + '/gzip');
         var buf = [];
@@ -260,16 +321,47 @@ describe('fetch tests', function () {
         });
     });
 
-    it('should return error for invalid protocol', function (done) {
-        var req = fetch('http://localhost:' + HTTPS_PORT);
+    if (!/^0\.10\./.test(process.versions.node)) {
+        // disabled for node 0.10
+        it('should return error for invalid protocol', function (done) {
+            var req = fetch('http://localhost:' + HTTPS_PORT);
+            var buf = [];
+            req.on('data', function (chunk) {
+                buf.push(chunk);
+            });
+            req.on('error', function (err) {
+                expect(err).to.exist;
+                done();
+            });
+            req.on('end', function () {});
+        });
+    }
+
+    it('should set cookie value', function (done) {
+        var req = fetch('http://localhost:' + HTTP_PORT + '/cookie', {
+            cookie: 'test=pest'
+        });
         var buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
-        req.on('error', function (err) {
-            expect(err).to.exist;
+        req.on('end', function () {
+            expect(Buffer.concat(buf).toString()).to.equal('test=pest');
             done();
         });
-        req.on('end', function () {});
+    });
+
+    it('should set user agent', function (done) {
+        var req = fetch('http://localhost:' + HTTP_PORT + '/ua', {
+            userAgent: 'nodemailer-fetch'
+        });
+        var buf = [];
+        req.on('data', function (chunk) {
+            buf.push(chunk);
+        });
+        req.on('end', function () {
+            expect(Buffer.concat(buf).toString()).to.equal('nodemailer-fetch');
+            done();
+        });
     });
 });

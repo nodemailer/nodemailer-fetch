@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.0 2016-01-18
+
+  * Exposed `options` object
+  * Added new options `maxRedirects`, `userAgent` and `cookie`
+
 ## v1.0.0 2015-12-30
 
   * Initial version
