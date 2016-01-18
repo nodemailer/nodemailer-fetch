@@ -1,6 +1,6 @@
 {
     "name": "nodemailer-fetch",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "GET HTTP contents",
     "main": "lib/fetch.js",
     "scripts": {

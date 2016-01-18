@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.1 2016-01-18
+
+  * Enclose http.request into try..catch to get url parse errors
+
 ## v1.2.0 2016-01-18
 
   * Export `Cookies` constructor

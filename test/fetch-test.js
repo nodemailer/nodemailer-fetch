@@ -309,6 +309,19 @@ describe('fetch tests', function () {
         req.on('end', function () {});
     });
 
+    it('should return error for invalid url', function (done) {
+        var req = fetch('http://localhost:99999999/');
+        var buf = [];
+        req.on('data', function (chunk) {
+            buf.push(chunk);
+        });
+        req.on('error', function (err) {
+            expect(err).to.exist;
+            done();
+        });
+        req.on('end', function () {});
+    });
+
     it('should handle basic HTTP auth', function (done) {
         var req = fetch('http://user:pass@localhost:' + HTTP_PORT + '/auth');
         var buf = [];
