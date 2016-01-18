@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.0 2016-01-18
+
+  * Export `Cookies` constructor
+
 ## v1.1.0 2016-01-18
 
   * Exposed `options` object
