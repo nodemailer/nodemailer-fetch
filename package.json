@@ -4,7 +4,7 @@
     "description": "GET HTTP contents",
     "main": "lib/fetch.js",
     "scripts": {
-        "test": "grunt"
+        "test": "grunt mochaTest"
     },
     "repository": {
         "type": "git",
