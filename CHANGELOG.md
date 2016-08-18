@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5.0 2016-08-18
+
+  * Allow streams as POST body
+
 ## v1.3.0 2016-02-11
 
   * Added new option `timeout`
