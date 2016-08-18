@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.6.0 2016-08-18
+
+  * Added new option `headers`
+
 ## v1.5.0 2016-08-18
 
   * Allow streams as POST body
