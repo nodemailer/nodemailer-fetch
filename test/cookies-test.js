@@ -1,18 +1,18 @@
-/* eslint no-unused-expressions:0 */
+/* eslint no-unused-expressions:0, prefer-arrow-callback: 0 */
 /* globals beforeEach, describe, it */
 
 'use strict';
 
-var chai = require('chai');
-var expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-//var http = require('http');
-var Cookies = require('../lib/cookies');
+//let http = require('http');
+const Cookies = require('../lib/cookies');
 
 chai.config.includeStack = true;
 
 describe('Cookies Unit Tests', function () {
-    var biskviit;
+    let biskviit;
 
     beforeEach(function () {
         biskviit = new Cookies();
@@ -173,7 +173,7 @@ describe('Cookies Unit Tests', function () {
 
     describe('#match', function () {
         it('should check if a cookie matches particular domain and path', function () {
-            var cookie = {
+            let cookie = {
                 name: 'zzz',
                 value: 'abc',
                 path: '/def/',
@@ -187,7 +187,7 @@ describe('Cookies Unit Tests', function () {
         });
 
         it('should check if a cookie matches particular domain and path', function () {
-            var cookie = {
+            let cookie = {
                 name: 'zzz',
                 value: 'abc',
                 path: '/def',
@@ -201,7 +201,7 @@ describe('Cookies Unit Tests', function () {
         });
 
         it('should check if a cookie is secure', function () {
-            var cookie = {
+            let cookie = {
                 name: 'zzz',
                 value: 'abc',
                 path: '/def/',

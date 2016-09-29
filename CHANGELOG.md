@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.0 2016-09-29
+
+  * Start using ES6 syntax, drop support for older Node.js versions
+
 ## v1.6.0 2016-08-18
 
   * Added new option `headers`

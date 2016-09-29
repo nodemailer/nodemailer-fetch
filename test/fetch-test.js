@@ -1,24 +1,24 @@
-/* eslint no-unused-expressions:0 */
+/* eslint no-unused-expressions:0, prefer-arrow-callback:0 */
 /* globals afterEach, beforeEach, describe, it */
 
 'use strict';
 
-var chai = require('chai');
-var expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-//var http = require('http');
-var fetch = require('../lib/fetch');
-var http = require('http');
-var https = require('https');
-var zlib = require('zlib');
-var PassThrough = require('stream').PassThrough;
+//let http = require('http');
+const fetch = require('../lib/fetch');
+const http = require('http');
+const https = require('https');
+const zlib = require('zlib');
+const PassThrough = require('stream').PassThrough;
 
 chai.config.includeStack = true;
 
-var HTTP_PORT = 9998;
-var HTTPS_PORT = 9993;
+const HTTP_PORT = 9998;
+const HTTPS_PORT = 9993;
 
-var httpsOptions = {
+const httpsOptions = {
     key: '-----BEGIN RSA PRIVATE KEY-----\n' +
         'MIIEpAIBAAKCAQEA6Z5Qqhw+oWfhtEiMHE32Ht94mwTBpAfjt3vPpX8M7DMCTwHs\n' +
         '1xcXvQ4lQ3rwreDTOWdoJeEEy7gMxXqH0jw0WfBx+8IIJU69xstOyT7FRFDvA1yT\n' +
@@ -66,7 +66,7 @@ var httpsOptions = {
 };
 
 describe('fetch tests', function () {
-    var httpServer, httpsServer;
+    let httpServer, httpsServer;
 
     beforeEach(function (done) {
         httpServer = http.createServer(function (req, res) {
@@ -123,16 +123,17 @@ describe('fetch tests', function () {
                     break;
 
                 case '/gzip':
-                    res.writeHead(200, {
-                        'Content-Type': 'text/plain',
-                        'Content-Encoding': 'gzip'
-                    });
+                    {
+                        res.writeHead(200, {
+                            'Content-Type': 'text/plain',
+                            'Content-Encoding': 'gzip'
+                        });
 
-                    var stream = zlib.createGzip();
-                    stream.pipe(res);
-                    stream.end('Hello World HTTP\n');
-                    break;
-
+                        let stream = zlib.createGzip();
+                        stream.pipe(res);
+                        stream.end('Hello World HTTP\n');
+                        break;
+                    }
                 case '/invalid':
                     res.writeHead(500, {
                         'Content-Type': 'text/plain'
@@ -162,22 +163,23 @@ describe('fetch tests', function () {
                     break;
 
                 case '/post':
-                    var body = [];
-                    req.on('readable', function () {
-                        var chunk;
-                        while ((chunk = req.read()) !== null) {
-                            body.push(chunk);
-                        }
-                    });
-                    req.on('end', function () {
-                        res.writeHead(200, {
-                            'Content-Type': 'text/plain'
+                    {
+                        let body = [];
+                        req.on('readable', function () {
+                            let chunk;
+                            while ((chunk = req.read()) !== null) {
+                                body.push(chunk);
+                            }
                         });
-                        res.end(Buffer.concat(body));
-                    });
+                        req.on('end', function () {
+                            res.writeHead(200, {
+                                'Content-Type': 'text/plain'
+                            });
+                            res.end(Buffer.concat(body));
+                        });
 
-                    break;
-
+                        break;
+                    }
                 default:
                     res.writeHead(200, {
                         'Content-Type': 'text/plain'
@@ -205,8 +207,8 @@ describe('fetch tests', function () {
     });
 
     it('should fetch HTTP data', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT);
-        var buf = [];
+        let req = fetch('http://localhost:' + HTTP_PORT);
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -217,8 +219,8 @@ describe('fetch tests', function () {
     });
 
     it('should fetch HTTPS data', function (done) {
-        var req = fetch('https://localhost:' + HTTPS_PORT);
-        var buf = [];
+        let req = fetch('https://localhost:' + HTTPS_PORT);
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -229,8 +231,8 @@ describe('fetch tests', function () {
     });
 
     it('should fetch HTTP data with redirects', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/redirect3');
-        var buf = [];
+        let req = fetch('http://localhost:' + HTTP_PORT + '/redirect3');
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -241,8 +243,8 @@ describe('fetch tests', function () {
     });
 
     it('should return error for too many redirects', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/redirect6');
-        var buf = [];
+        let req = fetch('http://localhost:' + HTTP_PORT + '/redirect6');
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -254,10 +256,10 @@ describe('fetch tests', function () {
     });
 
     it('should fetch HTTP data with custom redirect limit', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/redirect3', {
+        let req = fetch('http://localhost:' + HTTP_PORT + '/redirect3', {
             maxRedirects: 3
         });
-        var buf = [];
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -268,10 +270,10 @@ describe('fetch tests', function () {
     });
 
     it('should return error for custom redirect limit', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/redirect3', {
+        let req = fetch('http://localhost:' + HTTP_PORT + '/redirect3', {
             maxRedirects: 2
         });
-        var buf = [];
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -283,10 +285,10 @@ describe('fetch tests', function () {
     });
 
     it('should return disable redirects', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/redirect1', {
+        let req = fetch('http://localhost:' + HTTP_PORT + '/redirect1', {
             maxRedirects: 0
         });
-        var buf = [];
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -298,8 +300,8 @@ describe('fetch tests', function () {
     });
 
     it('should unzip compressed HTTP data', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/gzip');
-        var buf = [];
+        let req = fetch('http://localhost:' + HTTP_PORT + '/gzip');
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -310,8 +312,8 @@ describe('fetch tests', function () {
     });
 
     it('should return error for unresolved host', function (done) {
-        var req = fetch('http://asfhaskhhgbjdsfhgbsdjgk');
-        var buf = [];
+        let req = fetch('http://asfhaskhhgbjdsfhgbsdjgk');
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -323,8 +325,8 @@ describe('fetch tests', function () {
     });
 
     it('should return error for invalid status', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/invalid');
-        var buf = [];
+        let req = fetch('http://localhost:' + HTTP_PORT + '/invalid');
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -336,8 +338,8 @@ describe('fetch tests', function () {
     });
 
     it('should return error for invalid url', function (done) {
-        var req = fetch('http://localhost:99999999/');
-        var buf = [];
+        let req = fetch('http://localhost:99999999/');
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -349,10 +351,10 @@ describe('fetch tests', function () {
     });
 
     it('should return timeout error', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/forever', {
+        let req = fetch('http://localhost:' + HTTP_PORT + '/forever', {
             timeout: 1000
         });
-        var buf = [];
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -364,8 +366,8 @@ describe('fetch tests', function () {
     });
 
     it('should handle basic HTTP auth', function (done) {
-        var req = fetch('http://user:pass@localhost:' + HTTP_PORT + '/auth');
-        var buf = [];
+        let req = fetch('http://user:pass@localhost:' + HTTP_PORT + '/auth');
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -378,8 +380,8 @@ describe('fetch tests', function () {
     if (!/^0\.10\./.test(process.versions.node)) {
         // disabled for node 0.10
         it('should return error for invalid protocol', function (done) {
-            var req = fetch('http://localhost:' + HTTPS_PORT);
-            var buf = [];
+            let req = fetch('http://localhost:' + HTTPS_PORT);
+            let buf = [];
             req.on('data', function (chunk) {
                 buf.push(chunk);
             });
@@ -392,10 +394,10 @@ describe('fetch tests', function () {
     }
 
     it('should set cookie value', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/cookie', {
+        let req = fetch('http://localhost:' + HTTP_PORT + '/cookie', {
             cookie: 'test=pest'
         });
-        var buf = [];
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -406,10 +408,10 @@ describe('fetch tests', function () {
     });
 
     it('should set user agent', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/ua', {
+        let req = fetch('http://localhost:' + HTTP_PORT + '/ua', {
             userAgent: 'nodemailer-fetch'
         });
-        var buf = [];
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -420,14 +422,14 @@ describe('fetch tests', function () {
     });
 
     it('should post data', function (done) {
-        var req = fetch('http://localhost:' + HTTP_PORT + '/post', {
+        let req = fetch('http://localhost:' + HTTP_PORT + '/post', {
             method: 'post',
             body: {
                 hello: 'world 😭',
                 another: 'value'
             }
         });
-        var buf = [];
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -438,14 +440,14 @@ describe('fetch tests', function () {
     });
 
     it('should post stream data', function (done) {
-        var body = new PassThrough();
-        var data = new Buffer('hello=world%20%F0%9F%98%AD&another=value');
+        let body = new PassThrough();
+        let data = new Buffer('hello=world%20%F0%9F%98%AD&another=value');
 
-        var req = fetch('http://localhost:' + HTTP_PORT + '/post', {
+        let req = fetch('http://localhost:' + HTTP_PORT + '/post', {
             method: 'post',
-            body: body
+            body
         });
-        var buf = [];
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
@@ -454,12 +456,12 @@ describe('fetch tests', function () {
             done();
         });
 
-        var pos = 0;
-        var writeNext = function () {
+        let pos = 0;
+        let writeNext = function () {
             if (pos >= data.length) {
                 return body.end();
             }
-            var char = data.slice(pos++, pos);
+            let char = data.slice(pos++, pos);
             body.write(char);
             setImmediate(writeNext);
         };
@@ -468,12 +470,12 @@ describe('fetch tests', function () {
     });
 
     it('should return error for invalid cert', function (done) {
-        var req = fetch('https://localhost:' + HTTPS_PORT, {
+        let req = fetch('https://localhost:' + HTTPS_PORT, {
             tls: {
                 rejectUnauthorized: true
             }
         });
-        var buf = [];
+        let buf = [];
         req.on('data', function (chunk) {
             buf.push(chunk);
         });
