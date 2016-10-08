@@ -337,6 +337,24 @@ describe('fetch tests', function () {
         req.on('end', function () {});
     });
 
+    it('should allow invalid status', function (done) {
+        let req = fetch('http://localhost:' + HTTP_PORT + '/invalid', {
+            allowErrorResponse: true
+        });
+        let buf = [];
+        req.on('data', function (chunk) {
+            buf.push(chunk);
+        });
+        req.on('error', function (err) {
+            expect(err).to.not.exist;
+        });
+        req.on('end', function () {
+            expect(req.statusCode).to.equal(500);
+            expect(Buffer.concat(buf).toString()).to.equal('Hello World HTTP\n');
+            done();
+        });
+    });
+
     it('should return error for invalid url', function (done) {
         let req = fetch('http://localhost:99999999/');
         let buf = [];

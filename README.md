@@ -37,6 +37,7 @@ Possible options are the following:
   * **tls** optional object of TLS options
   * **timeout** (milliseconds) sets timeout for the connection. Returns an error if timeout occurs
   * **headers** custom headers as an object where key is the header key and value is either a string or an array of strings for multiple values
+  * **allowErrorResponse** of true then processes response even if the response code is non 2xx
 
   ```javascript
   var fetch = require('nodemailer-fetch');
